@@ -9,7 +9,7 @@ class ByteBankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body:  FormularioTransferencia(),
+        body: FormularioTransferencia(),
       ),
     );
   }
@@ -18,8 +18,9 @@ class ByteBankApp extends StatelessWidget {
 class FormularioTransferencia extends StatelessWidget {
   FormularioTransferencia({Key? key}) : super(key: key);
 
-  final TextEditingController _controladorCampoNumeroConta = TextEditingController();
-  final TextEditingController _controladorCampoValor = TextEditingController();
+  final TextEditingController controladorCampoNumeroConta =
+      TextEditingController();
+  final TextEditingController controladorCampoValor = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,44 +30,58 @@ class FormularioTransferencia extends StatelessWidget {
       ),
       body: Column(
         children: [
-           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controladorCampoNumeroConta,
-              style: const TextStyle(fontSize: 24.0),
-              decoration: const InputDecoration(
-                labelText: "Número da conta",
-                hintText: "0000",
-              ),
-              keyboardType: TextInputType.number,
-            ),
+          Editor(
+            controlador: controladorCampoNumeroConta,
+            rotulo: "Número da conta",
+            dica: "0000",
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _controladorCampoValor,
-              style: const TextStyle(fontSize: 24.0),
-              decoration: const InputDecoration(
-                icon: Icon(Icons.monetization_on),
-                labelText: "Valor",
-                hintText: "0.00",
-              ),
-              keyboardType: TextInputType.number,
-            ),
+          Editor(
+            controlador: controladorCampoValor,
+            rotulo: "Valor",
+            dica: "0.00",
+            icone: Icons.monetization_on,
           ),
           ElevatedButton(
-            onPressed: () {
-              debugPrint("Clicou no confirmar!");
-              final int? numeroConta = int.tryParse(_controladorCampoNumeroConta.text);
-              final double? valor = double.tryParse(_controladorCampoValor.text);
-              if(numeroConta != null && valor != null){
-                final transferenciaCriada = Transferencia(valor, numeroConta);
-                debugPrint("$transferenciaCriada");
-              }
-            },
+            onPressed: () => _criaTransferencia(),
             child: const Text("Confirmar"),
           ),
         ],
+      ),
+    );
+  }
+
+  void _criaTransferencia() {
+    final int? numeroConta =
+    int.tryParse(controladorCampoNumeroConta.text);
+    final double? valor = double.tryParse(controladorCampoValor.text);
+    if (numeroConta != null && valor != null) {
+      final transferenciaCriada = Transferencia(valor, numeroConta);
+      debugPrint("$transferenciaCriada");
+    }
+  }
+}
+
+class Editor extends StatelessWidget {
+  final TextEditingController? controlador;
+  final String? rotulo;
+  final String? dica;
+  final IconData? icone;
+
+  Editor({this.controlador, this.rotulo, this.dica, this.icone});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: TextField(
+        controller: controlador,
+        style: const TextStyle(fontSize: 24.0),
+        decoration: InputDecoration(
+          icon: icone != null? Icon(icone) : null,
+          labelText: rotulo,
+          hintText: dica,
+        ),
+        keyboardType: TextInputType.number,
       ),
     );
   }
